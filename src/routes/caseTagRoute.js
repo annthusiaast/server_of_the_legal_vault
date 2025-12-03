@@ -20,7 +20,7 @@ router.post(
 router.put(
   "/case-tags/:id",
   verifyUser,
-  requireAdmin,
+  // requireAdmin,
   caseTagController.updateCaseTag
 );
 

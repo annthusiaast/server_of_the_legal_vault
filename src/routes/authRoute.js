@@ -43,7 +43,7 @@ router.post("/login", async (req, res) => {
         [otp, otpExpiry, user.user_id]
       );
 
-      // await sendVerificationCode(user.user_email, otp);      // Send OTP via email
+      await sendVerificationCode(user.user_email, otp);      // Send OTP via email
 
       res.json({
         message: "OTP sent to your email",
@@ -71,15 +71,15 @@ router.post("/login", async (req, res) => {
       });
 
       // // For logging user login activity
-      // await query(
-      //   `INSERT INTO user_log_tbl (user_log_action, user_log_type, user_ip_address, user_id, user_fullname, user_profile) VALUES ('Login', 'User Log', $1, $2, $3, $4)`,
-      //   [
-      //     req.ip,
-      //     user.user_id,
-      //     `${user.user_fname} ${user.user_mname} ${user.user_lname}`,
-      //     user.user_profile,
-      //   ]
-      // );
+      await query(
+        `INSERT INTO user_log_tbl (user_log_action, user_log_type, user_ip_address, user_id, user_fullname, user_profile) VALUES ('Login', 'User Log', $1, $2, $3, $4)`,
+        [
+          req.ip,
+          user.user_id,
+          `${user.user_fname} ${user.user_mname} ${user.user_lname}`,
+          user.user_profile,
+        ]
+      );
 
       delete user.user_password;
       res.json({ user });
@@ -140,15 +140,15 @@ router.post("/verify-2fa", async (req, res) => {
     });
 
     // // For logging user login activity
-    //   await query(
-    //     `INSERT INTO user_log_tbl (user_log_action, user_log_type, user_ip_address, user_id, user_fullname, user_profile) VALUES ('Login', 'User Log', $1, $2, $3, $4)`,
-    //     [
-    //       req.ip,
-    //       user.user_id,
-    //       `${user.user_fname} ${user.user_mname} ${user.user_lname}`,
-    //       user.user_profile,
-    //     ]
-    //   );
+      await query(
+        `INSERT INTO user_log_tbl (user_log_action, user_log_type, user_ip_address, user_id, user_fullname, user_profile) VALUES ('Login', 'User Log', $1, $2, $3, $4)`,
+        [
+          req.ip,
+          user.user_id,
+          `${user.user_fname} ${user.user_mname} ${user.user_lname}`,
+          user.user_profile,
+        ]
+      );
 
     delete user.user_password;
     res.json({ user });
@@ -216,22 +216,22 @@ router.get("/verify", verifyUser, async (req, res) => {
 router.post("/logout", verifyUser, async (req, res) => {
   try {
     // Optional: Logging user logout activity
-    // await query(
-    //   `INSERT INTO user_log_tbl (user_log_action, user_log_type, user_ip_address, user_id, user_fullname, user_profile)
-    //    VALUES ('Logout', 'User Log', $1, $2, $3, $4)`,
-    //   [
-    //     req.ip,
-    //     req.user.user_id,
-    //     `${req.user.user_fname} ${req.user.user_mname} ${req.user.user_lname}`,
-    //     req.user.user_profile,
-    //   ]
-    // );
+    await query(
+      `INSERT INTO user_log_tbl (user_log_action, user_log_type, user_ip_address, user_id, user_fullname, user_profile)
+       VALUES ('Logout', 'User Log', $1, $2, $3, $4)`,
+      [
+        req.ip,
+        req.user.user_id,
+        `${req.user.user_fname} ${req.user.user_mname} ${req.user.user_lname}`,
+        req.user.user_profile,
+      ]
+    );
 
     // Mark user as not verified
-    // await query(
-    //   `UPDATE user_tbl SET user_is_verified = false WHERE user_id = $1`,
-    //   [req.user.user_id]
-    // );
+    await query(
+      `UPDATE user_tbl SET user_is_verified = false WHERE user_id = $1`,
+      [req.user.user_id]
+    );
 
     console.log("User logged out:", req.user.user_id);
   } catch (err) {
