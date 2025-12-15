@@ -95,7 +95,8 @@ export const createCase = async (req, res) => {
   try {
     const caseData = req.body;
     const newCase = await caseServices.createCase(caseData);
-
+    
+    //comment this part out for now to avoid email spam during demo
     // let creator;
     // if (newCase.assigned_by) {
     //   creator = await caseServices.getUserById(newCase.assigned_by);
